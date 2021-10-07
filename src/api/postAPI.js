@@ -1,7 +1,7 @@
 export const getPosts = () => {
     return fetch('https://jsonplaceholder.typicode.com/posts')
     .then((response) => response.json())
-}
+};
 
 export const addPost = (post) => {
     return fetch('https://jsonplaceholder.typicode.com/posts', {
@@ -16,4 +16,10 @@ export const addPost = (post) => {
         },
       })
     .then((response) => response.json())
-}
+};
+
+export const deletePost = (postId) => {
+    return fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+        method: 'DELETE',
+      });
+};

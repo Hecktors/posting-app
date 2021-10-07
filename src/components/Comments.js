@@ -5,7 +5,6 @@ import { getComments } from '../api/commentAPI';
 
 
 export default function Comments({postId, users}) {
-    console.log("postId, users", postId, users)
     const [comments, setComments] = useState([]);
 
     useEffect(() => {

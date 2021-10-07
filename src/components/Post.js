@@ -5,10 +5,13 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import ListItemButton from '@mui/material/ListItemButton';
 import Comments from './Comments';
 
-export default function Post({ post, users, username }) {
+
+export default function Post({ post, users, postOwner, user, deletePost }) {
     const [isCommentsOpen, setIsCommentsOpen] = useState(false)
+    const isPostOwner = postOwner.id === user.id;
     return (
         <>
             <ListItem alignItems="flex-start">
@@ -25,7 +28,7 @@ export default function Post({ post, users, username }) {
                                 variant="body2"
                                 color="text.primary"
                             >
-                                {username}
+                                {postOwner.username}
                             </Typography>
                             {" - " + post.body}
                             <br />
@@ -37,6 +40,15 @@ export default function Post({ post, users, username }) {
                         </React.Fragment>
                     }
                 />
+                {
+                    isPostOwner && <div>
+                    <ListItemButton>Edit</ListItemButton>
+                    <ListItemButton onClick={deletePost}>Delete</ListItemButton>
+                   </div>
+                }
+               
+                 
+
             </ListItem>
             {isCommentsOpen && <Comments postId={post.id} users={users} />}
             <Divider />

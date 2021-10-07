@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getPosts, addPost } from '../api/postAPI';
+import { getPosts, addPost, deletePost } from '../api/postAPI';
 import { getUsers } from '../api/userAPI';
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
@@ -13,21 +13,31 @@ export default function Posts({ user }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchData = async () => {
       setUsers(await getUsers());
       setPosts(await getPosts());
     }
-    fetchUser()
+    fetchData()
   }, []);
 
-  const addNewPost = async (postData) => {
+  const handleAddPost = async (postData) => {
     setPosts([await addPost(postData), ...posts]);
     setIsFormOpen(false);
   };
 
+  const handleDeletePost = async (postId) => {
+    (await deletePost(postId)).ok && setPosts(posts.filter(post => post.id !== (postId)));
+  }
+
   const postComponents = posts.map(post => {
-    const username = users.find(u => u.id === post.userId).username;
-    return <Post key={post.id} post={post} users={users} username={username} />
+    const postOwner = users.find(u => u.id === post.userId);
+    return <Post 
+            key={post.id + Math.floor(Math.random()*999999)} 
+            post={post} 
+            users={users} 
+            user={user} 
+            postOwner={postOwner}
+            deletePost={() => handleDeletePost(post.id)} />
   });
 
   const buttonContainer = <div style={{ textAlign: "right", maxWidth: '80%', margin: "10px auto" }}>
@@ -40,7 +50,7 @@ export default function Posts({ user }) {
       {isFormOpen
         ? <PostForm
           userId={user.id}
-          addNewPost={addNewPost}
+          addNewPost={handleAddPost}
           cancel={() => setIsFormOpen(false)}
         />
         : buttonContainer}
