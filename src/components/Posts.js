@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getPosts, addPost, deletePost } from '../api/postAPI';
+import { getPosts, addPost, updatePost, deletePost } from '../api/postAPI';
 import { getUsers } from '../api/userAPI';
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
 import Post from './Post';
 import PostForm from './PostForm';
-
 
 export default function Posts({ user }) {
   const [users, setUsers] = useState(null);
@@ -25,19 +24,25 @@ export default function Posts({ user }) {
     setIsFormOpen(false);
   };
 
+  const handleUpdatePost = async (postData) => {
+    const updatedPost = await updatePost(postData);
+    updatedPost && setPosts(posts.map(post => post.id === updatedPost.id ? updatedPost : post));
+  }
+
   const handleDeletePost = async (postId) => {
-    (await deletePost(postId)).ok && setPosts(posts.filter(post => post.id !== (postId)));
+    (await deletePost(postId)).ok && setPosts(posts.filter(post => post.id !== postId));
   }
 
   const postComponents = posts.map(post => {
     const postOwner = users.find(u => u.id === post.userId);
-    return <Post 
-            key={post.id + Math.floor(Math.random()*999999)} 
-            post={post} 
-            users={users} 
-            user={user} 
-            postOwner={postOwner}
-            deletePost={() => handleDeletePost(post.id)} />
+    return <Post
+      key={post.id + Math.floor(Math.random() * 999999)}
+      post={post}
+      users={users}
+      user={user}
+      postOwner={postOwner}
+      deletePost={() => handleDeletePost(post.id)}
+      updatePost={handleUpdatePost} />
   });
 
   const buttonContainer = <div style={{ textAlign: "right", maxWidth: '80%', margin: "10px auto" }}>
@@ -50,7 +55,7 @@ export default function Posts({ user }) {
       {isFormOpen
         ? <PostForm
           userId={user.id}
-          addNewPost={handleAddPost}
+          submitPost={handleAddPost}
           cancel={() => setIsFormOpen(false)}
         />
         : buttonContainer}

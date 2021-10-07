@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import Comment from './Comment';
-import List from '@mui/material/List';
 import { getComments } from '../api/commentAPI';
+import List from '@mui/material/List';
+import Comment from './Comment';
 
 
 export default function Comments({postId, users}) {
